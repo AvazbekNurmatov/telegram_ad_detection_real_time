@@ -4,6 +4,7 @@ import os
 import sys 
 import subprocess
 from telethon.tl.functions.contacts import BlockRequest
+from telethon.tl.functions.messages import DeleteHistoryRequest, ReportSpamRequest
 import pandas as pd
 import asyncio
 import atexit
@@ -149,13 +150,34 @@ async def my_event_handler(event):
         if clf.predict(chat_text) == 1:
             print(f"Blocking user {user_id} for sending ad content")
             try:
-                # FIXED: Get the sender entity from the event first
-                # This ensures Telethon has the full user information
+                # Get the sender entity from the event
                 sender = await event.get_sender()
+                
+                # Step 1: Delete the spam message
+                await event.delete()
+                print(f"✓ Deleted spam message from user {user_id}")
+                
+                # Step 2: Delete entire chat history with this user (makes them invisible)
+                await client(DeleteHistoryRequest(
+                    peer=sender,
+                    max_id=0,  # Delete all messages
+                    just_clear=False,  # Actually delete, don't just clear
+                    revoke=True  # Delete for both sides if possible
+                ))
+                print(f"✓ Deleted entire chat history with user {user_id}")
+                
+                # Step 3: Report as spam to Telegram
+                await client(ReportSpamRequest(peer=sender))
+                print(f"✓ Reported user {user_id} as spam to Telegram")
+                
+                # Step 4: Block the user
                 await client(BlockRequest(sender))
-                print(f"Successfully blocked user {user_id}")
+                print(f"✓ Blocked user {user_id}")
+                
+                print(f"✅ Successfully removed all traces of spammer {user_id}")
+                
             except Exception as e:
-                print(f"Error blocking user {user_id}: {e}")
+                print(f"❌ Error handling spam from user {user_id}: {e}")
 
 async def main():
     max_retries = 3
