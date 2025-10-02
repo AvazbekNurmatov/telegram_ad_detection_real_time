@@ -166,9 +166,11 @@ async def my_event_handler(event):
                 ))
                 print(f"✓ Deleted entire chat history with user {user_id}")
                 
-                # Step 3: Report as spam to Telegram
-                await client(ReportSpamRequest(peer=sender))
-                print(f"✓ Reported user {user_id} as spam to Telegram")
+                # Step 3: Report as spam to Telegram (COMMENTED OUT FOR TESTING)
+                # Uncomment the lines below when ready for production
+                # await client(ReportSpamRequest(peer=sender))
+                # print(f"✓ Reported user {user_id} as spam to Telegram")
+                print(f"⚠ Spam reporting disabled (testing mode)")
                 
                 # Step 4: Block the user
                 await client(BlockRequest(sender))

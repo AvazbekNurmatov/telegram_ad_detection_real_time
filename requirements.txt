@@ -1,4 +1,12 @@
-#telethon
-#torch
-#kafka-python 
-#transformers
+# Telegram client library
+telethon>=1.36.0
+
+# Data processing
+pandas>=2.0.0
+
+# Machine learning (for Naive Bayes classifier)
+scikit-learn>=1.3.0
+numpy>=1.24.0
+
+# Optional: For better performance
+cryptg>=0.4.0

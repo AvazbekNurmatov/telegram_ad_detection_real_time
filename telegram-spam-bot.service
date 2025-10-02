@@ -1,0 +1,43 @@
+[Unit]
+Description=Telegram Spam Detection Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=martin
+Group=martin
+WorkingDirectory=/home/martin/projects/tmp_telegram_spam_detection
+Environment="PATH=/home/martin/projects/tmp_telegram_spam_detection/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="PYTHONPATH=/home/martin/projects/tmp_telegram_spam_detection"
+Environment="PYTHONUNBUFFERED=1"
+
+# Clean up before starting
+ExecStartPre=/bin/bash -c 'pkill -9 -f "python.*main.py" || true'
+ExecStartPre=/bin/bash -c 'sleep 1'
+ExecStartPre=/bin/bash -c 'rm -f /home/martin/projects/tmp_telegram_spam_detection/telegram_bot.pid'
+ExecStartPre=/bin/bash -c 'rm -f /home/martin/projects/tmp_telegram_spam_detection/telegram_bot_session.session-journal'
+
+# Start the bot
+ExecStart=/home/martin/projects/tmp_telegram_spam_detection/venv/bin/python /home/martin/projects/tmp_telegram_spam_detection/main.py
+
+# Restart policy
+Restart=on-failure
+RestartSec=10
+
+# Graceful shutdown
+TimeoutStopSec=30
+KillMode=mixed
+KillSignal=SIGTERM
+
+# Security settings (optional but recommended)
+NoNewPrivileges=true
+PrivateTmp=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=telegram-spam-bot
+
+[Install]
+WantedBy=multi-user.target
