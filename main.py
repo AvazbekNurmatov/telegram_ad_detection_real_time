@@ -13,8 +13,8 @@ import signal
 from naive_bayes_classifier import NaiveBayesClassifier
 
 # Replace with your actual API ID and API Hash from my.telegram.org
-api_id = 23681808
-api_hash = 'eef4b030720087226f0f144e59000eef'
+api_id = xxxxxxxxx
+api_hash = 'xxxxxxxxxxxxxxxxxx'
 
 # CHANGED: Use a descriptive session name instead of 'anon'
 # This will create 'telegram_bot_session.session' file
